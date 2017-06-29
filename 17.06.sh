@@ -20,6 +20,13 @@ url="https://get.docker.com/"
 docker_version=17.06.0
 apt_url="https://apt.dockerproject.org"
 yum_url="https://yum.dockerproject.org"
+gpg_fingerprint="9DC858229FC7DD38854AE2D88D81803C0EBFCD88"
+
+key_servers="
+ha.pool.sks-keyservers.net
+pgp.mit.edu
+keyserver.ubuntu.com
+"
 
 mirror=''
 while [ $# -gt 0 ]; do
@@ -480,7 +487,10 @@ do_install() {
 
 			(
 			set -x
-			echo "$docker_key" | $sh_c 'apt-key add -'
+                        for key_server in $key_servers ; do
+                                $sh_c "apt-key adv --keyserver hkp://${key_server}:80 --recv-keys ${gpg_fingerprint}" && break
+                        done
+                        $sh_c "apt-key adv -k ${gpg_fingerprint} >/dev/null"
 			$sh_c "mkdir -p /etc/apt/sources.list.d"
 			$sh_c "echo deb \[arch=$(dpkg --print-architecture)\] ${apt_url}/repo ${lsb_dist}-${dist_version} ${repo} > /etc/apt/sources.list.d/docker.list"
 			$sh_c 'sleep 3; apt-get update; apt-get install -y -q docker-engine'
