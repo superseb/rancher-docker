@@ -16,7 +16,6 @@ set -e
 
 CHANNEL="stable"
 
-url="https://get.docker.com/"
 docker_version=17.06.0
 apt_url="https://apt.dockerproject.org"
 yum_url="https://yum.dockerproject.org"
