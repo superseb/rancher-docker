@@ -14,25 +14,12 @@ set -e
 #       located at https://github.com/docker/docker-install
 #       before executing.
 
-# This value will automatically get changed for:
-#   * edge
-#   * test
-#   * experimental
-DEFAULT_CHANNEL_VALUE="stable"
-if [ -z "$CHANNEL" ]; then
-    CHANNEL=$DEFAULT_CHANNEL_VALUE
-fi
+CHANNEL="stable"
 
 url="https://get.docker.com/"
 docker_version=17.06.0
 apt_url="https://apt.dockerproject.org"
 yum_url="https://yum.dockerproject.org"
-
-key_servers="
-ha.pool.sks-keyservers.net
-pgp.mit.edu
-keyserver.ubuntu.com
-"
 
 mirror=''
 while [ $# -gt 0 ]; do
@@ -154,15 +141,6 @@ deprecation_notice() {
 	echo
 	echo
 	sleep 10;
-}
-
-ee_notice() {
-	echo
-	echo
-	echo "  WARNING: $1 is now only supported by Docker EE"
-	echo "           Check https://store.docker.com for information on Docker EE"
-	echo
-	echo
 }
 
 do_install() {
@@ -397,7 +375,7 @@ do_install() {
 			echo_docker_as_nonroot
 			exit 0
 			;;
-		centos|fedora)
+		centos|fedora|redhat|oraclelinux)
 			yum_repo="https://download.docker.com/linux/centos/docker-ce.repo"
 			if [ "$lsb_dist" = "fedora" ]; then
 				if [ "$dist_version" -lt "24" ]; then
@@ -509,11 +487,6 @@ do_install() {
 			)
 			echo_docker_as_nonroot
 			exit 0
-			;;
-
-		redhat|oraclelinux)
-			ee_notice "$lsb_dist"
-			exit 1
 			;;
 	esac
 
